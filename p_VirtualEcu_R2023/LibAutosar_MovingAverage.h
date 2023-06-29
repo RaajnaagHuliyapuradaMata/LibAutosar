@@ -18,7 +18,6 @@
 /* All rights reserved. Copyright © 1982 Raajnaag HULIYAPURADA MATA           */
 /*                                                                            */
 /* Always refer latest software version from:                                 */
-/* git@bitbucket.org:raajnaag-huliyapurada-mata/<module_name>.git             */
 /* git@github.com:RaajnaagHuliyapuradaMata/<module_name>.git                  */
 /*                                                                            */
 /******************************************************************************/

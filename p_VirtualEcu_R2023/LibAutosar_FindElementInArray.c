@@ -1,5 +1,5 @@
 /******************************************************************************/
-/* File   : LibAutosar_MovingAverage.c                                        */
+/* File   : LibAutosar_FindElementInArray.c                                   */
 /*                                                                            */
 /* Author : Raajnaag HULIYAPURADA MATA                                        */
 /*                                                                            */
@@ -24,7 +24,7 @@
 /* #INCLUDES                                                                  */
 /******************************************************************************/
 #include "Std_Types.h"
-#include "LibAutosar_MovingAverage.h"
+#include "LibAutosar_FindElementInArray.h"
 
 /******************************************************************************/
 /* #DEFINES                                                                   */
@@ -53,35 +53,27 @@
 /******************************************************************************/
 /* FUNCTIONS                                                                  */
 /******************************************************************************/
-void LibAutosarInitMovingAverage(
-      LibAutosar_typeContextMovingAverage* lpstContext
-   ,  uint16*                              lpu16Buffer
-   ,  uint8                                lu8LenBuffer
+uint16 LibAutosar_u16FindElementInArray(
+      uint16* lptru16Array
+   ,  uint16  lu16NumElements
+   ,  uint16  lu16ValueElement
 ){
-   lpstContext->pu16Buffer       = lpu16Buffer;
-   lpstContext->u8LenBuffer      = lu8LenBuffer;
-   lpstContext->u8IndexSampleNew = 0;
-   lpstContext->u8NumberSamples  = 0;
-   lpstContext->u16MovingSum     = 0;
-   lpstContext->u16MovingAverage = 0;
-}
-
-void LibAutosarCalcMovingAverage(
-      LibAutosar_typeContextMovingAverage* lpstContext
-   ,  uint16                               lu16SampleNew
-){
-   uint16 lu16SampleOld = lpstContext->pu16Buffer[lpstContext->u8IndexSampleNew];
-   uint8  lu8SizeWindow = lpstContext->u8LenBuffer;
-   lpstContext->pu16Buffer[lpstContext->u8IndexSampleNew] = lu16SampleNew;
-   if(lu8SizeWindow > lpstContext->u8NumberSamples){
-      lpstContext->u8NumberSamples++;
-      lu16SampleOld = 0;
-      lu8SizeWindow = lpstContext->u8NumberSamples;
+   uint16 u16ReturnValueIndexElement = -1;
+   uint16 u16IndexElement;
+   for(
+      u16IndexElement = 0u;
+      u16IndexElement < lu16NumElements;
+      u16IndexElement ++
+   ){
+      if(
+            lptru16Array[u16IndexElement]
+         == lu16ValueElement
+      ){
+         u16ReturnValueIndexElement = u16IndexElement;
+         break;
+      }
    }
-   lpstContext->u16MovingSum    += lu16SampleNew - lu16SampleOld;
-   lpstContext->u16MovingAverage = lpstContext->u16MovingSum / lu8SizeWindow;
-   lpstContext->u8IndexSampleNew++;
-   lpstContext->u8IndexSampleNew %= lpstContext->u8LenBuffer;
+   return u16ReturnValueIndexElement;
 }
 
 /******************************************************************************/
