@@ -1,5 +1,6 @@
+#pragma once
 /******************************************************************************/
-/* File   : LibAutosarFifo.cpp                                                */
+/* File   : LibAutosar_Fifo.hpp                                               */
 /*                                                                            */
 /* Author : Raajnaag HULIYAPURADA MATA                                        */
 /*                                                                            */
@@ -23,9 +24,6 @@
 /******************************************************************************/
 /* #INCLUDES                                                                  */
 /******************************************************************************/
-#include "Std_Types.hpp"
-
-#include "LibAutosarFifo.hpp"
 
 /******************************************************************************/
 /* #DEFINES                                                                   */
@@ -38,6 +36,22 @@
 /******************************************************************************/
 /* TYPEDEFS                                                                   */
 /******************************************************************************/
+typedef uint8 LibAutosarFifo_tItem;
+
+typedef enum{
+      LibAutosarFifo_eStatus_OK
+   ,  LibAutosarFifo_eStatus_InitNotDone
+   ,  LibAutosarFifo_eStatus_NullPointer
+   ,  LibAutosarFifo_eStatus_Overflow
+   ,  LibAutosarFifo_eStatus_Underflow
+}LibAutosarFifo_teStatus;
+
+typedef struct{
+   LibAutosarFifo_tItem* ptBuffer; //TBD: Based on size of Item, it is possible to extend ring buffer for generic Item types
+   uint8                 u8NumMaxItems; //TBD: max length init
+   uint8                 u8IndexWrite;
+   uint8                 u8IndexRead;
+}LibAutosarFifo_t;
 
 /******************************************************************************/
 /* CONSTS                                                                     */
@@ -54,105 +68,21 @@
 /******************************************************************************/
 /* FUNCTIONS                                                                  */
 /******************************************************************************/
-LibAutosarFifo_teStatus LibAutosarFifo_InitFunction(
+extern LibAutosarFifo_teStatus LibAutosarFifo_InitFunction(
       LibAutosarFifo_t*     lpstFifo
    ,  LibAutosarFifo_tItem* lptBuffer
    ,  uint8                 lu8NumMaxItems
-){
-   LibAutosarFifo_teStatus lValueReturn;
-   if(
-         NULL_PTR
-      != lpstFifo
-   ){
-      if(
-            NULL_PTR
-         != lptBuffer
-      ){
-         lpstFifo->ptBuffer      = lptBuffer;
-         lpstFifo->u8NumMaxItems = lu8NumMaxItems; //TBD: Length chack needed
-         lpstFifo->u8IndexWrite  =  0;
-         lpstFifo->u8IndexRead   = lu8NumMaxItems-1;
-      }
-      else{
-         lValueReturn = LibAutosarFifo_eStatus_NullPointer;
-      }
-   }
-   else{
-      lValueReturn = LibAutosarFifo_eStatus_InitNotDone;
-   }
-   return lValueReturn;
-}
+);
 
-LibAutosarFifo_teStatus LibAutosarFifo_Get(
+extern LibAutosarFifo_teStatus LibAutosarFifo_Get(
       LibAutosarFifo_t*     lpstFifo
    ,  LibAutosarFifo_tItem* lptItem
-){
-   LibAutosarFifo_teStatus lValueReturn;
-   if(
-         NULL_PTR
-      != lpstFifo
-   ){
-      if(
-            NULL_PTR
-         != lpstFifo->ptBuffer
-      ){
-         if(
-               lpstFifo->u8IndexWrite
-            != (
-                     (lpstFifo->u8IndexRead + 1)
-                  %  lpstFifo->u8NumMaxItems
-               )
-         ){
-            lpstFifo->u8IndexRead = (lpstFifo->u8IndexRead + 1) % lpstFifo->u8NumMaxItems;
-            *lptItem = lpstFifo->ptBuffer[lpstFifo->u8IndexRead];
-            lValueReturn = LibAutosarFifo_eStatus_OK;
-         }else{
-            lValueReturn = LibAutosarFifo_eStatus_Underflow;
-         }
-      }
-      else{
-         lValueReturn = LibAutosarFifo_eStatus_NullPointer;
-      }
-   }
-   else{
-      lValueReturn = LibAutosarFifo_eStatus_InitNotDone;
-   }
-   return lValueReturn;
-}
+);
 
-LibAutosarFifo_teStatus LibAutosarFifo_Put(
+extern LibAutosarFifo_teStatus LibAutosarFifo_Put(
       LibAutosarFifo_t* lpstFifo
    ,  uint8             lu8Item
-){
-   LibAutosarFifo_teStatus lValueReturn;
-   if(
-         NULL_PTR
-      != lpstFifo
-   ){
-      if(
-            NULL_PTR
-         != lpstFifo->ptBuffer
-      ){
-         if(
-               lpstFifo->u8IndexRead
-            != lpstFifo->u8IndexWrite
-         ){
-            lpstFifo->ptBuffer[lpstFifo->u8IndexWrite] = lu8Item;
-            lpstFifo->u8IndexWrite = (lpstFifo->u8IndexWrite + 1) % lpstFifo->u8NumMaxItems;
-            lValueReturn = LibAutosarFifo_eStatus_OK;
-         }else{
-            lValueReturn = LibAutosarFifo_eStatus_Overflow;
-         }
-      }
-      else{
-         lValueReturn = LibAutosarFifo_eStatus_NullPointer;
-      }
-   }
-   else{
-      lValueReturn = LibAutosarFifo_eStatus_InitNotDone;
-   }
-   return lValueReturn;
-}
+);
 
 /******************************************************************************/
 /* EOF                                                                        */
