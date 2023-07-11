@@ -30,7 +30,6 @@
 /******************************************************************************/
 /* #DEFINES                                                                   */
 /******************************************************************************/
-#define LibAutosarStateMachine_dStateDefault ((Type_LibAutosarStateMachine_eState)-1)
 #define LibAutosarStateMachine_dMaxDepthHierarchy                             8u //TBD: Move to Cfg
 
 /******************************************************************************/
@@ -66,11 +65,11 @@ static void lvHandlevent(
    ,  Type_eHierarchy                               leHierarchy
 ){
    const Type_LibAutosarStateMachine_stInfoState*   lptrstInfoState;
-   const LibAutosarStateMachine_stEventEntry*       lptrcstEventEntry;
+   const Type_LibAutosarStateMachine_stInfoEvent*   lptrcstInfoEvent;
          Type_LibAutosarStateMachine_eGaurd         leGaurd;
          Type_LibAutosarStateMachine_eState         leState      = lctptrContext->eState;
          uint16                                     u16Hierarchy = 0u;
-         uint16                                     u16IndexTrigger;
+         uint16                                     u16IndexEvent;
 
    while(
          (
@@ -82,24 +81,24 @@ static void lvHandlevent(
             <  lctptrContext->u16NumStates
         )
    ){
-      lptrstInfoState   = &lctptrContext->pcstInfoState[leState];
-      lptrcstEventEntry = lptrstInfoState->ptrcstEventEntry;
+      lptrstInfoState  = &lctptrContext->pcstInfoState[leState];
+      lptrcstInfoEvent = lptrstInfoState->ptrcstInfoEvent;
       for(
-         u16IndexTrigger = 0u;
-         u16IndexTrigger < lptrstInfoState->u16NumTrigger;
-         u16IndexTrigger ++
+         u16IndexEvent = 0u;
+         u16IndexEvent < lptrstInfoState->u16NumEvents;
+         u16IndexEvent ++
       ){
          if(
                (
-                     lptrcstEventEntry[u16IndexTrigger].eEvent
+                     lptrcstInfoEvent[u16IndexEvent].eEvent
                   == leEvent
                )
             || (
-                     lptrcstEventEntry[u16IndexTrigger].eEvent
+                     lptrcstInfoEvent[u16IndexEvent].eEvent
                   == LibAutosarStateMachine_eEventAny
                )
          ){
-            leGaurd = lptrcstEventEntry[u16IndexTrigger].eHandler(
+            leGaurd = lptrcstInfoEvent[u16IndexEvent].eHandler(
                   lctptrContext
                ,  leEvent
             );
@@ -111,7 +110,7 @@ static void lvHandlevent(
                      LibAutosarStateMachine_eGaurdTrue
                   == leGaurd
                ){
-                  lctptrContext->eStatePending = lptrcstEventEntry[u16IndexTrigger].eStateNext;
+                  lctptrContext->eStatePending = lptrcstInfoEvent[u16IndexEvent].eStateNext;
                }
                leState = LibAutosarStateMachine_dStateDefault;
                break;
@@ -177,12 +176,17 @@ static uint8 lu8GetStateHierachy(
 }
 
 void LibAutosarStateMachine_vInitFunction(
-      Type_LibAutosarStateMachine_tptrContext const lctptrContext
-   ,  Type_LibAutosarStateMachine_eState            leStateInitial
+            Type_LibAutosarStateMachine_tptrContext const lctptrContext
+   ,        Type_LibAutosarStateMachine_eState            leStateInitial
+   ,        uint16                                        lu16NumStates
+   ,  const Type_LibAutosarStateMachine_stInfoState*      lpcstInfoState
 ){
    lctptrContext->eState        = LibAutosarStateMachine_dStateDefault;
    lctptrContext->eStatePending = leStateInitial;
    lctptrContext->eEventPending = LibAutosarStateMachine_eEventNone;
+   lctptrContext->u16NumStates  = lu16NumStates;
+   lctptrContext->pcstInfoState = lpcstInfoState;
+
    LibAutosarStateMachineState_vRunnable(lctptrContext);
 }
 

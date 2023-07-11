@@ -28,6 +28,7 @@
 /******************************************************************************/
 /* #DEFINES                                                                   */
 /******************************************************************************/
+#define LibAutosarStateMachine_dStateDefault ((Type_LibAutosarStateMachine_eState)-1)
 
 /******************************************************************************/
 /* MACROS                                                                     */
@@ -43,35 +44,35 @@ typedef enum{
 }Type_LibAutosarStateMachine_eGaurd;
 
 typedef enum{ //TBD: Server independent, client configurable
-      LibAutosarStateMachine_eStatePowerOn
-   ,  LibAutosarStateMachine_eStateINIT
-   ,  LibAutosarStateMachine_eStateCHECK_SWCSERVICESTARTUP_VALIDITY
-   ,  LibAutosarStateMachine_eStateFailSAFE_UPDATER_ENABLED
-   ,  LibAutosarStateMachine_eStateFailSAFE_UPDATER_SEARCH_INIT
-   ,  LibAutosarStateMachine_eStateFailSAFE_UPDATER_CHECK
-   ,  LibAutosarStateMachine_eStateFailSAFE_UPDATER_SEARCH_NEXT
-   ,  LibAutosarStateMachine_eStateCALL_FAILSAFE_UPDATER
-   ,  LibAutosarStateMachine_eStateSECURE_BOOT_ENABLED
-   ,  LibAutosarStateMachine_eStateCHECK_KEY_AVAILABILITY
-   ,  LibAutosarStateMachine_eStateCALL_SWCSERVICESTARTUP_INIT_KEY
-   ,  LibAutosarStateMachine_eStateINIT_SWCSERVICESTARTUP_MAC_ENABLED
-   ,  LibAutosarStateMachine_eStateCHECK_SWCSERVICESTARTUP_MAC_ERASED
-   ,  LibAutosarStateMachine_eStateCALL_SWCSERVICESTARTUP_INIT_CMAC
-   ,  LibAutosarStateMachine_eStateSTAY_IN_BOOT_ENABLED
-   ,  LibAutosarStateMachine_eStateCHECK_APPL_START_FLAG
-   ,  LibAutosarStateMachine_eStateCHECK_SWCSERVICESTARTUP_LBT
-   ,  LibAutosarStateMachine_eStateCHECK_REPROG_FLAG
-   ,  LibAutosarStateMachine_eStateREPROG_LBT_ENABLED
-   ,  LibAutosarStateMachine_eStateCHECK_REPROG_LBT
-   ,  LibAutosarStateMachine_eStateTARGET_LIST_INIT
-   ,  LibAutosarStateMachine_eStateTARGET_CHECK
-   ,  LibAutosarStateMachine_eStateTARGET_LIST_NEXT
-   ,  LibAutosarStateMachine_eStateCALL_TARGET
-   ,  LibAutosarStateMachine_eStateCHECK_SWCSERVICESTARTUP_VERIFICATION
-   ,  LibAutosarStateMachine_eStateCHECK_SWCSERVICESTARTUP_VERIFICATION_STAY_IN_BOOT
-   ,  LibAutosarStateMachine_eStateCALL_SWCSERVICESTARTUP
-   ,  LibAutosarStateMachine_eStateCALL_SWCSERVICESTARTUP_STAY_IN_BOOT
+      LibAutosarStateMachine_eStateCallFailsafeUpdater
+   ,  LibAutosarStateMachine_eStateCallSwcServiceStartUp
+   ,  LibAutosarStateMachine_eStateCallSwcServiceStartUpInitCmac
+   ,  LibAutosarStateMachine_eStateCallSwcServiceStartUpInitKey
+   ,  LibAutosarStateMachine_eStateCallSwcServiceStartUpStayInBoot
+   ,  LibAutosarStateMachine_eStateCallTarget
+   ,  LibAutosarStateMachine_eStateCheckApplStartFlag
+   ,  LibAutosarStateMachine_eStateCheckKeyAvailability
+   ,  LibAutosarStateMachine_eStateCheckReprogFlag
+   ,  LibAutosarStateMachine_eStateCheckReprogLbt
+   ,  LibAutosarStateMachine_eStateCheckSwcServiceStartUpLbt
+   ,  LibAutosarStateMachine_eStateCheckSwcServiceStartUpMacErased
+   ,  LibAutosarStateMachine_eStateCheckSwcServiceStartUpValidity
+   ,  LibAutosarStateMachine_eStateCheckSwcServiceStartUpVerification
+   ,  LibAutosarStateMachine_eStateCheckSwcServiceStartUpVerificationStayInBoot
    ,  LibAutosarStateMachine_eStateFail
+   ,  LibAutosarStateMachine_eStateFailsafeUpdaterCheck
+   ,  LibAutosarStateMachine_eStateFailsafeUpdaterEnabled
+   ,  LibAutosarStateMachine_eStateFailsafeUpdaterSearchInit
+   ,  LibAutosarStateMachine_eStateFailsafeUpdaterSearchNext
+   ,  LibAutosarStateMachine_eStateInit
+   ,  LibAutosarStateMachine_eStateInitSwcServiceStartUpMacEnabled
+   ,  LibAutosarStateMachine_eStatePowerOn
+   ,  LibAutosarStateMachine_eStateReprogLbtEnabled
+   ,  LibAutosarStateMachine_eStateSecureBootEnabled
+   ,  LibAutosarStateMachine_eStateStayInBootEnabled
+   ,  LibAutosarStateMachine_eStateTargetCheck
+   ,  LibAutosarStateMachine_eStateTargetListInit
+   ,  LibAutosarStateMachine_eStateTargetListNext
 }Type_LibAutosarStateMachine_eState;
 
 typedef enum{
@@ -92,22 +93,22 @@ typedef Type_LibAutosarStateMachine_eGaurd (*Type_LibAutosarStateMachine_eEventH
 
 typedef struct{
          Type_LibAutosarStateMachine_eEventHandler  eHandler;
-         Type_LibAutosarStateMachine_eEvent         eEvent; // trigger
+         Type_LibAutosarStateMachine_eEvent         eEvent;
          Type_LibAutosarStateMachine_eState         eStateNext;
-}LibAutosarStateMachine_stEventEntry;
+}Type_LibAutosarStateMachine_stInfoEvent;
 
 typedef struct{
+         uint16                                     u16NumEvents;
+   const Type_LibAutosarStateMachine_stInfoEvent*   ptrcstInfoEvent;
          Type_LibAutosarStateMachine_eState         eStateSuper;
-         uint16                                     u16NumTrigger;
-   const LibAutosarStateMachine_stEventEntry*       ptrcstEventEntry;
 }Type_LibAutosarStateMachine_stInfoState;
 
 struct Type_LibAutosarStateMachine_stContext{
-   const Type_LibAutosarStateMachine_stInfoState*   pcstInfoState;
-         uint16                                     u16NumStates;
          Type_LibAutosarStateMachine_eState         eState;
          Type_LibAutosarStateMachine_eState         eStatePending;
          Type_LibAutosarStateMachine_eEvent         eEventPending;
+         uint16                                     u16NumStates;
+   const Type_LibAutosarStateMachine_stInfoState*   pcstInfoState;
 };
 
 /******************************************************************************/
@@ -126,17 +127,19 @@ struct Type_LibAutosarStateMachine_stContext{
 /* FUNCTIONS                                                                  */
 /******************************************************************************/
 extern void LibAutosarStateMachine_vInitFunction(
-      Type_LibAutosarStateMachine_tptrContext const lctptrContext
-   ,  Type_LibAutosarStateMachine_eState            leStateInitial
+            Type_LibAutosarStateMachine_tptrContext const lctptrContext
+   ,        Type_LibAutosarStateMachine_eState            leStateInitial
+   ,        uint16                                        lu16NumStates
+   ,  const Type_LibAutosarStateMachine_stInfoState*      lpcstInfoState
 );
 
 extern void LibAutosarStateMachineState_vRunnable(
-      Type_LibAutosarStateMachine_tptrContext const lctptrContext
+            Type_LibAutosarStateMachine_tptrContext const lctptrContext
 );
 
 extern void LibAutosarStateMachine_vTriggerEvent(
-      Type_LibAutosarStateMachine_tptrContext const lctptrContext
-   ,  Type_LibAutosarStateMachine_eEvent            leEvent
+            Type_LibAutosarStateMachine_tptrContext const lctptrContext
+   ,        Type_LibAutosarStateMachine_eEvent            leEvent
 );
 
 /******************************************************************************/
