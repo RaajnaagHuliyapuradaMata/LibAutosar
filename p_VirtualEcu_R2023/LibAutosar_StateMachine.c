@@ -175,7 +175,7 @@ static uint8 lu8GetStateHierachy(
    return lu8IndexHierarchy;
 }
 
-void LibAutosarStateMachine_vInitFunction(
+FUNC(void, LIBAUTOSAR_CODE) LibAutosarStateMachine_vInitFunction(
             Type_LibAutosarStateMachine_tptrContext const lctptrContext
    ,        Type_LibAutosarStateMachine_eState            leStateInitial
    ,        uint16                                        lu16NumStates
@@ -190,7 +190,7 @@ void LibAutosarStateMachine_vInitFunction(
    LibAutosarStateMachineState_vRunnable(lctptrContext);
 }
 
-void LibAutosarStateMachineState_vRunnable(
+FUNC(void, LIBAUTOSAR_CODE) LibAutosarStateMachineState_vRunnable(
    Type_LibAutosarStateMachine_tptrContext const lctptrContext
 ){
    Type_LibAutosarStateMachine_eState laeStateHierarchyExit[LibAutosarStateMachine_dMaxDepthHierarchy];
@@ -289,7 +289,7 @@ void LibAutosarStateMachineState_vRunnable(
    }
 }
 
-void LibAutosarStateMachine_vTriggerEvent(
+FUNC(void, LIBAUTOSAR_CODE) LibAutosarStateMachine_vTriggerEvent(
       Type_LibAutosarStateMachine_tptrContext const lctptrContext
    ,  Type_LibAutosarStateMachine_eEvent            leEvent
 ){

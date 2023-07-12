@@ -24,6 +24,7 @@
 /******************************************************************************/
 /* #INCLUDES                                                                  */
 /******************************************************************************/
+#include "CompilerCfg_LibAutosar.h"
 
 /******************************************************************************/
 /* #DEFINES                                                                   */
@@ -126,18 +127,18 @@ struct Type_LibAutosarStateMachine_stContext{
 /******************************************************************************/
 /* FUNCTIONS                                                                  */
 /******************************************************************************/
-extern void LibAutosarStateMachine_vInitFunction(
+extern FUNC(void, LIBAUTOSAR_CODE) LibAutosarStateMachine_vInitFunction(
             Type_LibAutosarStateMachine_tptrContext const lctptrContext
    ,        Type_LibAutosarStateMachine_eState            leStateInitial
    ,        uint16                                        lu16NumStates
    ,  const Type_LibAutosarStateMachine_stInfoState*      lpcstInfoState
 );
 
-extern void LibAutosarStateMachineState_vRunnable(
+extern FUNC(void, LIBAUTOSAR_CODE) LibAutosarStateMachineState_vRunnable(
             Type_LibAutosarStateMachine_tptrContext const lctptrContext
 );
 
-extern void LibAutosarStateMachine_vTriggerEvent(
+extern FUNC(void, LIBAUTOSAR_CODE) LibAutosarStateMachine_vTriggerEvent(
             Type_LibAutosarStateMachine_tptrContext const lctptrContext
    ,        Type_LibAutosarStateMachine_eEvent            leEvent
 );
