@@ -9,7 +9,7 @@ extern "C"
 
 #define SYSSERVICE_ASRCRC_VERSION         (0x0400u)
 #define SYSSERVICE_ASRCRC_RELEASE_VERSION (0x01u)
-#define CRC_VENDOR_ID               (30u)
+#define CRC_VENDOR_ID               (1u)
 #define CRC_MODULE_ID               (201u)
 #define CRC_INSTANCE_ID             (0u)
 #define CRC_AR_MAJOR_VERSION        (3u)
